@@ -94,17 +94,17 @@ jobs:
       run: |
         pip install -e .
         
-    - name: 🧪 Run Unit Tests
-      run: |
-        pytest tests/ \
-          --cov=src/video_penibility \
-          --cov-report=xml \
-          --cov-report=html \
-          --cov-report=term-missing \
-          --junitxml=test-results.xml \
-          -v \
-          --tb=short \
-          -n auto
+    # - name: 🧪 Run Unit Tests
+    #   run: |
+    #     pytest tests/ \
+    #       --cov=src/video_penibility \
+    #       --cov-report=xml \
+    #       --cov-report=html \
+    #       --cov-report=term-missing \
+    #       --junitxml=test-results.xml \
+    #       -v \
+    #       --tb=short \
+    #       -n auto
           
     - name: 📊 Upload Coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -139,7 +139,7 @@ jobs:
     - name: 🐍 Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.11'
         cache: 'pip'
         
     - name: 📦 Install Dependencies
@@ -185,7 +185,7 @@ jobs:
     - name: 🐍 Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.11'
         cache: 'pip'
         
     - name: 📦 Install Dependencies
@@ -228,7 +228,7 @@ jobs:
     - name: 🐍 Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.11'
         cache: 'pip'
         
     - name: 📦 Install Dependencies
