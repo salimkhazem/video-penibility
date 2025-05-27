@@ -5,7 +5,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any
 import logging
 
 # Add src to path
@@ -25,9 +25,7 @@ from rich.progress import (
     TimeElapsedColumn,
 )
 from rich.panel import Panel
-from rich.text import Text
 from rich.logging import RichHandler
-import yaml
 
 from video_penibility.config.schema import MainConfig, load_config
 from video_penibility.datasets import DatasetFactory
@@ -209,7 +207,7 @@ def create_prediction_plot(
     ax2.axhline(y=0, color="r", linestyle="--", alpha=0.8)
     ax2.set_xlabel("True Values")
     ax2.set_ylabel("Residuals (Pred - True)")
-    ax2.set_title(f"Residuals Plot")
+    ax2.set_title("Residuals Plot")
     ax2.grid(True, alpha=0.3)
 
     plt.tight_layout()

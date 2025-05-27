@@ -2,7 +2,6 @@
 
 import pytest
 import torch
-from unittest.mock import patch, MagicMock
 
 from video_penibility.models.factory import ModelFactory
 from video_penibility.models.transformer import TransformerModel

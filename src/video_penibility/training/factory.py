@@ -6,7 +6,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.tensorboard import SummaryWriter
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 import logging
 from pathlib import Path
 import numpy as np
@@ -84,7 +84,7 @@ def create_prediction_plot(
     ax2.axhline(y=0, color="black", linestyle="--", alpha=0.8, linewidth=2)
     ax2.set_xlabel("True Values")
     ax2.set_ylabel("Residuals (Pred - True)")
-    ax2.set_title(f"Residuals Plot")
+    ax2.set_title("Residuals Plot")
     ax2.grid(True, alpha=0.3)
 
     # Add residual statistics
@@ -257,7 +257,7 @@ class EnhancedTrainer:
         ) as progress:
 
             epoch_task = progress.add_task(
-                f"   Training", total=self.training_config.num_epochs
+                "   Training", total=self.training_config.num_epochs
             )
 
             for epoch in range(self.training_config.num_epochs):
@@ -308,9 +308,6 @@ class EnhancedTrainer:
                         writer.add_figure(
                             f"fold_{fold_num}/val_predictions", val_fig, epoch
                         )
-                        plt.close(val_fig)
-
-                        # Log prediction histograms
                         writer.add_histogram(
                             f"fold_{fold_num}/train_predictions_hist",
                             train_preds,

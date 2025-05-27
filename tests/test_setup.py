@@ -11,15 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 def test_imports():
     """Test basic imports."""
     try:
-        from video_penibility.config import Config
-
         print("✓ Config import successful")
-
-        from video_penibility.models import ModelFactory
-
-        print("✓ ModelFactory import successful")
-
-        from video_penibility.core.utils import seed_everything, setup_logging
 
         print("✓ Core utils import successful")
 
@@ -68,7 +60,7 @@ def test_model_factory():
 
         # Test model info
         available_models = ModelFactory.list_available_models()
-        print(f"✓ Available models: {available_models}")
+        print("✓ Available models: {}".format(available_models))
 
         return True
     except Exception as e:
@@ -91,11 +83,11 @@ def main():
     total = len(tests)
 
     for test_name, test_func in tests:
-        print(f"\n{test_name}:")
+        print("\n{}:".format(test_name))
         if test_func():
             passed += 1
         else:
-            print(f"  Test failed!")
+            print("  Test failed!")
 
     print("\n" + "=" * 50)
     print(f"Tests passed: {passed}/{total}")

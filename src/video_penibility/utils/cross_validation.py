@@ -1,7 +1,6 @@
 """Cross-validation utilities for video penibility assessment."""
 
-import numpy as np
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple
 from sklearn.model_selection import KFold
 import logging
 
