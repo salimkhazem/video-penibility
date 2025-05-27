@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Simple test script to verify the package setup."""
-
+"""
+Test basic setup and imports.
+"""
+import pytest
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+from video_penibility import __version__
+from video_penibility.config import Config
+from video_penibility.models import ModelFactory
 
 
 def test_imports():

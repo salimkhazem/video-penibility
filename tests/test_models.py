@@ -2,11 +2,7 @@
 
 import pytest
 import torch
-import sys
 from pathlib import Path
-
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from video_penibility.models.factory import ModelFactory
 from video_penibility.models.transformer import TransformerModel

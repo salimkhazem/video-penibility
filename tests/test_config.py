@@ -4,10 +4,6 @@ import pytest
 import tempfile
 import yaml
 from pathlib import Path
-import sys
-
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from video_penibility.config import Config
 
