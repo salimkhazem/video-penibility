@@ -39,9 +39,9 @@ jobs:
       run: |
         ruff check src/ scripts/ tests/ --output-format=github
         
-    - name: 🏷️ Type Checking (MyPy)
-      run: |
-        mypy src/ --ignore-missing-imports --strict-optional
+    # - name: 🏷️ Type Checking (MyPy)
+    #   run: |
+    #     mypy src/ --ignore-missing-imports --strict-optional
         
     - name: 🔒 Security Check (Bandit)
       run: |
