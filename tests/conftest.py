@@ -54,7 +54,7 @@ def sample_targets() -> torch.Tensor:
     """Sample target values for testing."""
     # Penibility scores between 1-10
     batch_size = 2
-    return torch.rand(batch_size) * 9 + 1  # Values between 1-10
+    return (torch.rand(batch_size, 1) * 9 + 1)  # Values between 1-10, shape [batch_size, 1]
 
 
 @pytest.fixture

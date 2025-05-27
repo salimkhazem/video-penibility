@@ -5,29 +5,33 @@ import sys
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 
 def test_imports():
     """Test basic imports."""
     try:
         print("✓ Config import successful")
-
         print("✓ Core utils import successful")
-
-        return True
+        # Test passes if we reach here without exceptions
+        assert True
     except Exception as e:
         print(f"✗ Import failed: {e}")
-        return False
+        assert False, f"Import failed: {e}"
 
 
 def test_config():
     """Test configuration functionality."""
     try:
-        from video_penibility.config import Config
+        from video_penibility.config.schema import MainConfig, ExperimentConfig, DataConfig, ModelConfig, TrainingConfig
 
-        # Test default config
-        config = Config()
+        # Create config without validation for testing
+        config = MainConfig()
+        
+        # Override the validation to skip file checks for testing
+        original_validate = config.validate
+        config.validate = lambda: None
+        
         assert config.experiment.name == "default_experiment"
         assert config.model.name == "gru"
         print("✓ Default configuration works")
@@ -39,19 +43,21 @@ def test_config():
         assert config.model.hidden_dim == 256
         print("✓ Configuration modification works")
 
-        return True
     except Exception as e:
         print(f"✗ Config test failed: {e}")
-        return False
+        assert False, f"Config test failed: {e}"
 
 
 def test_model_factory():
     """Test model factory functionality."""
     try:
-        from video_penibility.config import Config
+        from video_penibility.config.schema import MainConfig
         from video_penibility.models import ModelFactory
 
-        config = Config()
+        # Create config without validation for testing
+        config = MainConfig()
+        config.validate = lambda: None  # Skip validation for testing
+        
         input_dim = 1024
 
         # Test model creation
@@ -61,11 +67,11 @@ def test_model_factory():
         # Test model info
         available_models = ModelFactory.list_available_models()
         print("✓ Available models: {}".format(available_models))
+        assert len(available_models) > 0
 
-        return True
     except Exception as e:
         print(f"✗ Model factory test failed: {e}")
-        return False
+        assert False, f"Model factory test failed: {e}"
 
 
 def main():
@@ -84,10 +90,11 @@ def main():
 
     for test_name, test_func in tests:
         print("\n{}:".format(test_name))
-        if test_func():
+        try:
+            test_func()
             passed += 1
-        else:
-            print("  Test failed!")
+        except Exception as e:
+            print(f"  Test failed: {e}")
 
     print("\n" + "=" * 50)
     print(f"Tests passed: {passed}/{total}")

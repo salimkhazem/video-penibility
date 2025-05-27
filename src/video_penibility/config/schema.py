@@ -100,7 +100,7 @@ class VisualizationConfig:
     show_plots: bool = False
     plot_format: str = "png"
     dpi: int = 300
-    figure_size: tuple = (10, 8)
+    figure_size: List[int] = field(default_factory=lambda: [10, 8])
 
 
 @dataclass
