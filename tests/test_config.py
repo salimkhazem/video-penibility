@@ -14,14 +14,14 @@ from video_penibility.config import Config
 
 def load_config(config_path):
     """Load config from YAML file - helper function for tests."""
-    with open(config_path, 'r') as f:
+    with open(config_path, "r") as f:
         return yaml.safe_load(f)
 
 
 def create_test_config():
     """Create a Config object without validation for testing."""
     from video_penibility.config.schema import MainConfig
-    
+
     # Create config without calling the constructor that validates
     config = Config.__new__(Config)
     config._config = MainConfig()

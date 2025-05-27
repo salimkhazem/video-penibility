@@ -90,7 +90,7 @@ class TestModelFactory:
         """Test error handling for invalid model names."""
         factory = ModelFactory()
         model_config = ModelConfig(name="invalid_model")
-        
+
         with pytest.raises(ValueError, match="Unsupported model type"):
             factory.create_model(model_config, input_dim=1024)
 
@@ -126,7 +126,7 @@ class TestTransformerModel:
             if param.numel() > 1:  # Skip bias terms which might be zero
                 non_zero_params += torch.count_nonzero(param).item()
                 total_param_count += param.numel()
-        
+
         # At least 50% of parameters should be non-zero
         assert non_zero_params / total_param_count > 0.5
 
@@ -136,9 +136,7 @@ class TestTCNModel:
 
     def test_forward_pass(self, sample_features):
         """Test forward pass of TCN model."""
-        model = TCNModel(
-            input_dim=1024, hidden_dim=128, kernel_size=3, dropout=0.1
-        )
+        model = TCNModel(input_dim=1024, hidden_dim=128, kernel_size=3, dropout=0.1)
 
         outputs = model(sample_features)
 
@@ -148,9 +146,7 @@ class TestTCNModel:
     def test_different_kernel_sizes(self, sample_features):
         """Test TCN with different kernel sizes."""
         for kernel_size in [3, 5, 7]:
-            model = TCNModel(
-                input_dim=1024, hidden_dim=64, kernel_size=kernel_size
-            )
+            model = TCNModel(input_dim=1024, hidden_dim=64, kernel_size=kernel_size)
 
             outputs = model(sample_features)
             assert outputs.shape == (sample_features.size(0), 1)
@@ -195,9 +191,7 @@ class TestModelIntegration:
     """Integration tests for models."""
 
     @pytest.mark.parametrize("model_name", ["transformer", "tcn", "lstm", "gru"])
-    def test_model_training_mode(
-        self, model_name, sample_features
-    ):
+    def test_model_training_mode(self, model_name, sample_features):
         """Test that all models can switch between train/eval modes."""
         factory = ModelFactory()
         model_config = ModelConfig(
@@ -209,7 +203,7 @@ class TestModelIntegration:
             model_config.num_heads = 4
         elif model_name == "tcn":
             model_config.kernel_size = 3
-            
+
         model = factory.create_model(model_config, input_dim=1024)
 
         # Test training mode
@@ -227,9 +221,7 @@ class TestModelIntegration:
         # Outputs should have the same shape regardless of mode
         assert outputs_train.shape == outputs_eval.shape
 
-    def test_model_gradient_computation(
-        self, sample_features, sample_targets
-    ):
+    def test_model_gradient_computation(self, sample_features, sample_targets):
         """Test that models can compute gradients."""
         model = TransformerModel(
             input_dim=1024, hidden_dim=64, num_layers=1, num_heads=4
@@ -261,9 +253,7 @@ class TestModelIntegration:
 class TestModelPerformance:
     """Performance tests for models."""
 
-    def test_inference_speed(
-        self, sample_features, performance_threshold
-    ):
+    def test_inference_speed(self, sample_features, performance_threshold):
         """Test model inference speed."""
         import time
 
@@ -285,9 +275,7 @@ class TestModelPerformance:
         inference_time_ms = (end_time - start_time) * 1000
         assert inference_time_ms < performance_threshold["max_inference_time_ms"]
 
-    def test_memory_usage(
-        self, sample_features, performance_threshold
-    ):
+    def test_memory_usage(self, sample_features, performance_threshold):
         """Test model memory usage."""
         try:
             import psutil

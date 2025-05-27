@@ -23,15 +23,21 @@ def test_imports():
 def test_config():
     """Test configuration functionality."""
     try:
-        from video_penibility.config.schema import MainConfig, ExperimentConfig, DataConfig, ModelConfig, TrainingConfig
+        from video_penibility.config.schema import (
+            MainConfig,
+            ExperimentConfig,
+            DataConfig,
+            ModelConfig,
+            TrainingConfig,
+        )
 
         # Create config without validation for testing
         config = MainConfig()
-        
+
         # Override the validation to skip file checks for testing
         original_validate = config.validate
         config.validate = lambda: None
-        
+
         assert config.experiment.name == "default_experiment"
         assert config.model.name == "gru"
         print("✓ Default configuration works")
@@ -57,7 +63,7 @@ def test_model_factory():
         # Create config without validation for testing
         config = MainConfig()
         config.validate = lambda: None  # Skip validation for testing
-        
+
         input_dim = 1024
 
         # Test model creation
