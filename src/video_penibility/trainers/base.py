@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Union
 import logging
 from pathlib import Path
 import numpy as np
@@ -56,8 +56,8 @@ class BaseTrainer(ABC):
         # Training state
         self.current_epoch = 0
         self.best_val_loss = float("inf")
-        self.train_history = []
-        self.val_history = []
+        self.train_history: List[Dict[str, float]] = []
+        self.val_history: List[Dict[str, float]] = []
 
         # Early stopping
         self.early_stopping_patience = kwargs.get("early_stopping_patience", 30)
@@ -210,7 +210,7 @@ class BaseTrainer(ABC):
         return ccc
 
     def _save_model(
-        self, save_path: str, epoch: int, metrics: Dict[str, float]
+        self, save_path: Union[str, Path], epoch: int, metrics: Dict[str, float]
     ) -> None:
         """Save model checkpoint.
 

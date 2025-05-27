@@ -6,7 +6,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.tensorboard import SummaryWriter
-from typing import Dict, Optional
+from typing import Dict, Optional, Union, Any
 import logging
 from pathlib import Path
 import numpy as np
@@ -178,7 +178,7 @@ class EnhancedTrainer:
         else:
             raise ValueError(f"Unsupported loss function: {loss_name}")
 
-    def _create_scheduler(self) -> Optional[torch.optim.lr_scheduler._LRScheduler]:
+    def _create_scheduler(self) -> Optional[Any]:
         """Create learning rate scheduler based on configuration."""
         if self.training_config.scheduler is None:
             return None

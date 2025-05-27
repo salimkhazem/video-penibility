@@ -1,6 +1,6 @@
 """Cross-validation utilities for video penibility assessment."""
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from sklearn.model_selection import KFold
 import logging
 
@@ -22,7 +22,7 @@ def create_subject_splits(
     """
     # Extract subject information
     subjects = []
-    subject_to_indices = {}
+    subject_to_indices: Dict[str, List[int]] = {}
 
     for idx, item in enumerate(dataset.data_items):
         subject_id = item["subject_id"]

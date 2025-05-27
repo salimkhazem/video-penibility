@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from typing import Dict, Type
+from typing import Dict, Type, Optional
 import logging
 
 from .base import BaseTrainer
@@ -126,7 +126,7 @@ class TrainerFactory:
     @classmethod
     def create_scheduler(
         cls, optimizer: torch.optim.Optimizer, training_config: TrainingConfig
-    ) -> torch.optim.lr_scheduler._LRScheduler:
+    ) -> Optional[torch.optim.lr_scheduler._LRScheduler]:
         """Create learning rate scheduler based on configuration.
 
         Args:
