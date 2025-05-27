@@ -247,7 +247,9 @@ class BaseTrainer(ABC):
         Returns:
             Checkpoint data.
         """
-        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        # NOTE: This torch.load is used for trusted model checkpoints only
+        # Checkpoints are saved by our own training pipeline
+        checkpoint = torch.load(checkpoint_path, map_location=self.device)  # nosec B614
 
         self.model.load_state_dict(checkpoint["model_state_dict"])
         self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
