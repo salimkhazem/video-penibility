@@ -1,0 +1,57 @@
+# Default configuration for video penibility assessment
+
+experiment:
+  name: "default_experiment"
+  seed: 42
+  output_dir: "results"
+  device: "auto"
+  log_level: "INFO"
+  tags: []
+
+data:
+  annotation_path: "data/labels/annotation_file.csv"
+  features_type: "i3d"
+  libreface_features: "all"
+  data_type: "full_body"
+  target_normalization: false
+  max_timesteps: null
+  features_root: "data/features"
+
+model:
+  name: "gru"
+  hidden_dim: 512
+  num_heads: 8  # For transformer
+  num_layers: 2
+  output_dim: 1
+  dropout: 0.1
+  kernel_size: 3  # For TCN
+  extra_params: {}
+
+training:
+  batch_size: 16
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  num_epochs: 100
+  early_stopping_patience: 30
+  optimizer: "adamw"
+  scheduler: null
+  scheduler_params: {}
+  loss_function: "mse"
+  metrics: ["mse", "mae", "r2", "ccc"]
+  save_best_model: true
+  save_last_model: false
+  save_checkpoints: false
+  checkpoint_frequency: 10
+
+cross_validation:
+  n_splits: 5
+  strategy: "subject_wise"
+  shuffle: true
+  random_state: null
+
+visualization:
+  save_plots: true
+  show_plots: false
+  plot_format: "png"
+  dpi: 300
+  figure_size: [10, 8] 

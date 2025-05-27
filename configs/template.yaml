@@ -1,0 +1,50 @@
+# Template configuration for video penibility assessment
+# Copy this file and modify paths and parameters for your specific experiment
+
+experiment:
+  name: "experiment_name"              # Unique name for this experiment
+  seed: 42                            # Random seed for reproducibility
+  output_dir: "results/experiment"    # Directory to save results and models
+  device: "cuda:0"                    # Device to use (cuda:0, cuda:1, cpu)
+  log_level: "INFO"                   # Logging level (DEBUG, INFO, WARNING, ERROR)
+  tags: ["tag1", "tag2"]              # Tags for experiment tracking
+
+data:
+  annotation_path: "path/to/annotations.csv"    # Path to annotation CSV file
+  features_root: "path/to/features"             # Root directory containing extracted features
+  features_type: "i3d"                          # Feature type: i3d, swin3d_t, facenet, etc.
+  data_type: "full_body"                        # Data type: full_body, face_1.7, etc.
+  target_normalization: false                   # Whether to normalize target values
+  max_timesteps: null                           # Max sequence length (null for no limit)
+
+model:
+  name: "transformer"                  # Model type: lstm, gru, transformer, tcn
+  hidden_dim: 512                     # Hidden dimension size
+  num_heads: 8                        # Number of attention heads (transformer only)
+  num_layers: 2                       # Number of layers
+  output_dim: 1                       # Output dimension (1 for regression)
+  dropout: 0.1                        # Dropout rate
+  kernel_size: 3                      # Kernel size (TCN only)
+  extra_params: {}                    # Additional model-specific parameters
+
+training:
+  batch_size: 16                      # Training batch size
+  learning_rate: 0.001                # Initial learning rate
+  weight_decay: 0.01                  # Weight decay (L2 regularization)
+  num_epochs: 150                     # Maximum number of epochs
+  early_stopping_patience: 30         # Early stopping patience
+  optimizer: "adamw"                  # Optimizer: adam, adamw, sgd, rmsprop
+  loss_function: "mse"                # Loss function: mse, mae, huber, smooth_l1
+  metrics: ["mse", "mae", "r2", "ccc"] # Metrics to compute
+  save_best_model: true               # Whether to save best model
+  scheduler: null                     # LR scheduler: step, plateau, cosine, exponential
+  scheduler_params: {}                # Scheduler parameters
+
+cross_validation:
+  n_splits: 5                         # Number of CV folds
+  strategy: "subject_wise"            # CV strategy: subject_wise, random
+  random_state: 42                    # Random state for CV splits
+
+visualization:
+  save_plots: true                    # Whether to save training plots
+  show_plots: false                   # Whether to display plots during training 

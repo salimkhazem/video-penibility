@@ -1,0 +1,48 @@
+# Configuration for FaceNet features with LSTM model for face analysis
+# Equivalent to: python train_features_seq.py --features_type facenet --model_name lstm --data_type face_1.7 --n_splits 5 --lr 0.001 --num_epochs 150 --batch_size 16
+
+experiment:
+  name: "facenet_lstm"
+  seed: 42
+  output_dir: "results/facenet_lstm"
+  device: "cuda:0"
+  log_level: "INFO"
+  tags: ["facenet", "lstm", "face_1.7"]
+
+data:
+  annotation_path: "/mnt/user_disk/skhazem/storage_1_10T/ai_vision_share/data/labels/annotation_skeewai_v2.csv"
+  features_root: "/mnt/user_disk/skhazem/storage_1_10T/ai_vision_share/features"
+  features_type: "facenet"
+  data_type: "face_1.7"
+  target_normalization: false
+  max_timesteps: null
+
+model:
+  name: "lstm"
+  hidden_dim: 256
+  num_layers: 2
+  output_dim: 1
+  dropout: 0.1
+  extra_params: {}
+
+training:
+  batch_size: 16
+  learning_rate: 0.001
+  weight_decay: 0.01
+  num_epochs: 150
+  early_stopping_patience: 30
+  optimizer: "adamw"
+  loss_function: "mse"
+  metrics: ["mse", "mae", "r2", "ccc"]
+  save_best_model: true
+  scheduler: null
+  scheduler_params: {}
+
+cross_validation:
+  n_splits: 5
+  strategy: "subject_wise"
+  random_state: 42
+
+visualization:
+  save_plots: true
+  show_plots: false 

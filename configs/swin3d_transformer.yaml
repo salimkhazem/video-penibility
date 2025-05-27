@@ -1,0 +1,38 @@
+# Configuration for Swin3D Transformer experiment
+
+experiment:
+  name: "swin3d_transformer_experiment"
+  seed: 42
+  output_dir: "results"
+  device: "cuda:0"
+  log_level: "INFO"
+  tags: ["swin3d", "transformer", "full_body"]
+
+data:
+  annotation_path: "../data/labels/annotation_skeewai_v2.csv"
+  features_type: "swin3d_t"
+  data_type: "full_body"
+  target_normalization: false
+
+model:
+  name: "transformer"
+  hidden_dim: 512
+  num_heads: 8
+  num_layers: 2
+  output_dim: 1
+  dropout: 0.1
+
+training:
+  batch_size: 16
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  num_epochs: 150
+  early_stopping_patience: 30
+
+cross_validation:
+  n_splits: 5
+  strategy: "subject_wise"
+
+visualization:
+  save_plots: true
+  show_plots: false 

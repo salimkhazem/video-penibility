@@ -1,0 +1,50 @@
+# Configuration equivalent to original command:
+# python src/dl_video/train_features_seq.py --features_type i3d --model_name tcn --data_type full_body --n_splits 5 --lr 0.001 --num_epochs 150 --batch_size 16 --device cuda:0
+
+experiment:
+  name: "i3d_tcn"
+  seed: 42
+  output_dir: "results/i3d_tcn"
+  device: "cuda:0"                              # As in original command
+  log_level: "INFO"
+  tags: ["i3d", "tcn", "full_body"]
+
+data:
+  annotation_path: "/mnt/user_disk/skhazem/storage_1_10T/ai_vision_share/data/labels/annotation_skeewai_v2.csv"
+  features_root: "/mnt/user_disk/skhazem/storage_1_10T/ai_vision_share/features"
+  features_type: "i3d"                          # As in original command
+  data_type: "full_body"                        # As in original command
+  target_normalization: false
+  max_timesteps: null
+
+model:
+  name: "tcn"                                   # As in original command
+  hidden_dim: 512
+  num_layers: 4                                 # TCN uses num_channels instead, will be handled in factory
+  output_dim: 1
+  dropout: 0.2
+  kernel_size: 3
+  extra_params: 
+    num_channels: [256, 256, 128, 64]          # TCN-specific parameter
+
+training:
+  batch_size: 16                               # As in original command
+  learning_rate: 0.001                         # As in original command
+  weight_decay: 0.01
+  num_epochs: 150                              # As in original command
+  early_stopping_patience: 30
+  optimizer: "adamw"
+  loss_function: "mse"
+  metrics: ["mse", "mae", "r2", "ccc"]
+  save_best_model: true
+  scheduler: null
+  scheduler_params: {}
+
+cross_validation:
+  n_splits: 5                                  # As in original command
+  strategy: "subject_wise"
+  random_state: 42
+
+visualization:
+  save_plots: true
+  show_plots: false 

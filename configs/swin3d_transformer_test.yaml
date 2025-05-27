@@ -1,0 +1,49 @@
+# Quick test configuration for swin3d transformer
+# Shorter version for testing
+
+experiment:
+  name: "swin3d_transformer_test"
+  seed: 42
+  output_dir: "results/swin3d_test"
+  device: "cuda:0"
+  log_level: "INFO"
+  tags: ["swin3d_t", "transformer", "full_body", "test"]
+
+data:
+  annotation_path: "/mnt/user_disk/skhazem/storage_1_10T/ai_vision_share/data/labels/annotation_skeewai_v2.csv"
+  features_root: "/mnt/user_disk/skhazem/storage_1_10T/ai_vision_share/features"
+  features_type: "swin3d_t"
+  data_type: "full_body"
+  target_normalization: false
+  max_timesteps: null
+
+model:
+  name: "transformer"
+  hidden_dim: 512
+  num_heads: 8
+  num_layers: 2
+  output_dim: 1
+  dropout: 0.1
+  extra_params: {}
+
+training:
+  batch_size: 16
+  learning_rate: 0.001
+  weight_decay: 0.01
+  num_epochs: 5  # Very short for testing
+  early_stopping_patience: 30
+  optimizer: "adamw"
+  loss_function: "mse"
+  metrics: ["mse", "mae", "r2", "ccc"]
+  save_best_model: true
+  scheduler: null
+  scheduler_params: {}
+
+cross_validation:
+  n_splits: 2  # Only 2 folds for testing
+  strategy: "subject_wise"
+  random_state: 42
+
+visualization:
+  save_plots: true
+  show_plots: false 
