@@ -1,7 +1,7 @@
 """
 Video Penibility Assessment Package
 
-A modular framework for assessing physical workload (penibility) from video sequences 
+A modular framework for assessing physical workload (penibility) from video sequences
 using deep learning techniques.
 """
 
