@@ -114,8 +114,14 @@ experiments/
 runs/
 logs/
 checkpoints/
-models/
 saved_models/
+models/*.pth
+models/*.pt
+models/*.h5
+models/*.pkl
+models/*.pickle
+models/*.joblib
+models/*.onnx
 
 # TensorBoard logs
 tensorboard/
