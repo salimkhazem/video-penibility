@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Literal, Any, Dict
 from pathlib import Path
-import yaml
+import yaml  # type: ignore
 
 
 @dataclass

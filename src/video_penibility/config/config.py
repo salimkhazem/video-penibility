@@ -1,6 +1,6 @@
 """Configuration loading and management."""
 
-import yaml
+import yaml  # type: ignore
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 from dataclasses import asdict, fields

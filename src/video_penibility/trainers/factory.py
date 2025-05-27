@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from typing import Dict, Type, Optional
+from typing import Dict, Type, Optional, Any
 import logging
 
 from .base import BaseTrainer
@@ -79,7 +79,7 @@ class TrainerFactory:
         optimizer_class = cls._optimizer_registry[optimizer_name]
 
         # Base optimizer arguments
-        optimizer_args = {
+        optimizer_args: Dict[str, Any] = {
             "lr": training_config.learning_rate,
             "weight_decay": training_config.weight_decay,
         }
