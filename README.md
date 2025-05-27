@@ -216,24 +216,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 **Acknowledgments**
 
-- PyTorch team for the excellent deep learning framework
-- TensorBoard for comprehensive experiment visualization
-- Rich library for beautiful console output
-- Contributors to the various feature extraction methods
 
 ## 📚 **Citation**
 
 If you use this framework in your research, please cite:
 
-```bibtex
-@software{video_penibility_framework,
-  title={Video Penibility Assessment Framework},
-  author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/video_penibility_assessment}
-}
-```
-
----
-
-**🎯 Ready to assess video penibility with state-of-the-art deep learning!**
