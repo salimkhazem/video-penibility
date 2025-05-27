@@ -101,12 +101,12 @@ jobs:
         echo "EOF" >> $GITHUB_OUTPUT
         
     - name: 🎯 Create GitHub Release
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.version.outputs.version }}
-        release_name: 'Release ${{ steps.version.outputs.version }}'
+        name: 'Release ${{ steps.version.outputs.version }}'
         body: ${{ steps.notes.outputs.notes }}
         draft: false
         prerelease: ${{ contains(steps.version.outputs.version, '-') }}
@@ -169,7 +169,7 @@ jobs:
         "
         
     - name: 📤 Upload Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: release-packages
         path: dist/
@@ -232,7 +232,7 @@ jobs:
         cd docs && sphinx-build -b html . _build/html
         
     - name: 📤 Upload Documentation
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: documentation
         path: docs/_build/html/
