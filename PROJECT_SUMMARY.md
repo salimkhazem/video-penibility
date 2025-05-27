@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-This document summarizes the refactored and modularized version of the Video Penibility Assessment framework. The project has been restructured for better maintainability, reusability, and GitHub publication.
+This document summarizes the refactored and modularized version of the Video Penibility Assessment framework.
 
 ## 🏗️ Project Structure
 
