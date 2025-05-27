@@ -23,19 +23,12 @@ def test_imports():
 def test_config():
     """Test configuration functionality."""
     try:
-        from video_penibility.config.schema import (
-            MainConfig,
-            ExperimentConfig,
-            DataConfig,
-            ModelConfig,
-            TrainingConfig,
-        )
+        from video_penibility.config.schema import MainConfig
 
         # Create config without validation for testing
         config = MainConfig()
 
         # Override the validation to skip file checks for testing
-        original_validate = config.validate
         config.validate = lambda: None
 
         assert config.experiment.name == "default_experiment"
