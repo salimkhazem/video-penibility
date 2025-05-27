@@ -12,8 +12,8 @@ from .schema import (
 __all__ = [
     "Config",
     "ExperimentConfig",
-    "DataConfig", 
+    "DataConfig",
     "ModelConfig",
     "TrainingConfig",
     "CrossValidationConfig",
-] 
+]

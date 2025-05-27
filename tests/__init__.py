@@ -1,1 +1,1 @@
-"""Tests for the video penibility assessment framework.""" 
+"""Tests for the video penibility assessment framework."""

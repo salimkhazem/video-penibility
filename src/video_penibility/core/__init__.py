@@ -6,6 +6,6 @@ from .utils import seed_everything, setup_logging, get_device
 __all__ = [
     "ExperimentRunner",
     "seed_everything",
-    "setup_logging", 
+    "setup_logging",
     "get_device",
-] 
+]

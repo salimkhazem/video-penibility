@@ -17,8 +17,8 @@ from .trainers import TrainerFactory
 
 __all__ = [
     "ExperimentRunner",
-    "Config", 
+    "Config",
     "ModelFactory",
     "DatasetFactory",
     "TrainerFactory",
-] 
+]

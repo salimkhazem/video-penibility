@@ -15,27 +15,22 @@ def sample_config() -> Dict[str, Any]:
         "experiment": {
             "name": "test_experiment",
             "device": "cpu",
-            "output_dir": "test_results"
+            "output_dir": "test_results",
         },
         "data": {
             "features_type": "i3d",
             "data_type": "full_body",
             "annotation_path": "/path/to/test/annotations.csv",
-            "features_root": "/path/to/test/features/"
+            "features_root": "/path/to/test/features/",
         },
-        "model": {
-            "name": "tcn",
-            "hidden_dim": 128,
-            "num_layers": 2,
-            "dropout": 0.1
-        },
+        "model": {"name": "tcn", "hidden_dim": 128, "num_layers": 2, "dropout": 0.1},
         "training": {
             "batch_size": 4,
             "learning_rate": 0.001,
             "num_epochs": 5,
             "optimizer": "adam",
-            "n_splits": 2
-        }
+            "n_splits": 2,
+        },
     }
 
 
@@ -100,7 +95,7 @@ def mock_features_dir(temp_dir: Path) -> Path:
     """Create mock feature files for testing."""
     features_dir = temp_dir / "features"
     features_dir.mkdir()
-    
+
     # Create mock feature files
     for video_id in ["test_video_1", "test_video_2", "test_video_3", "test_video_4"]:
         feature_file = features_dir / f"{video_id}.npy"
@@ -108,7 +103,7 @@ def mock_features_dir(temp_dir: Path) -> Path:
         seq_len = np.random.randint(20, 35)
         features = np.random.randn(seq_len, 1024).astype(np.float32)
         np.save(feature_file, features)
-    
+
     return features_dir
 
 
@@ -127,24 +122,25 @@ def performance_threshold():
 @pytest.fixture
 def mock_tensorboard_logger():
     """Mock TensorBoard logger for testing."""
+
     class MockLogger:
         def __init__(self):
             self.logged_scalars = {}
             self.logged_figures = {}
-            
+
         def add_scalar(self, tag, value, step):
             if tag not in self.logged_scalars:
                 self.logged_scalars[tag] = []
             self.logged_scalars[tag].append((value, step))
-            
+
         def add_figure(self, tag, figure, step):
             if tag not in self.logged_figures:
                 self.logged_figures[tag] = []
             self.logged_figures[tag].append((figure, step))
-            
+
         def close(self):
             pass
-    
+
     return MockLogger()
 
 
@@ -154,12 +150,6 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
     )
-    config.addinivalue_line(
-        "markers", "integration: marks tests as integration tests"
-    )
-    config.addinivalue_line(
-        "markers", "gpu: marks tests that require GPU"
-    )
-    config.addinivalue_line(
-        "markers", "performance: marks performance tests"
-    ) 
+    config.addinivalue_line("markers", "integration: marks tests as integration tests")
+    config.addinivalue_line("markers", "gpu: marks tests that require GPU")
+    config.addinivalue_line("markers", "performance: marks performance tests")

@@ -6,6 +6,6 @@ from .factory import TrainerFactory
 
 __all__ = [
     "BaseTrainer",
-    "RegressionTrainer", 
+    "RegressionTrainer",
     "TrainerFactory",
-] 
+]
