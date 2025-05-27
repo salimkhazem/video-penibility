@@ -2,13 +2,7 @@
 """
 Test basic setup and imports.
 """
-import pytest
 import sys
-from pathlib import Path
-
-from video_penibility import __version__
-from video_penibility.config import Config
-from video_penibility.models import ModelFactory
 
 
 def test_imports():

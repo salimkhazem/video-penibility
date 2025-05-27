@@ -2,7 +2,6 @@
 
 import pytest
 import torch
-from pathlib import Path
 
 from video_penibility.models.factory import ModelFactory
 from video_penibility.models.transformer import TransformerModel
