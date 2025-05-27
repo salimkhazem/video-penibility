@@ -6,7 +6,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.tensorboard import SummaryWriter
-from typing import Dict, Optional, Union, Any
+from typing import Dict, Optional, Any
 import logging
 from pathlib import Path
 import numpy as np
