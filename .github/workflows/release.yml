@@ -1,0 +1,290 @@
+name: 🚀 Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags like v1.0.0, v2.1.3, etc.
+  workflow_dispatch:  # Allow manual releases
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        type: string
+
+env:
+  PYTHON_VERSION: '3.9'
+
+jobs:
+  # ================================
+  # Create GitHub Release
+  # ================================
+  create-release:
+    name: 📦 Create GitHub Release
+    runs-on: ubuntu-latest
+    outputs:
+      release-version: ${{ steps.version.outputs.version }}
+      release-notes: ${{ steps.notes.outputs.notes }}
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for changelog generation
+        
+    - name: 🏷️ Get Version
+      id: version
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION="${GITHUB_REF#refs/tags/}"
+        fi
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "Version: ${VERSION}"
+        
+    - name: 📝 Generate Release Notes
+      id: notes
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        
+        # Create release notes
+        cat > release_notes.md << EOF
+        # 🎉 Release ${VERSION}
+        
+        ## 📊 What's New
+        
+        This release includes the latest improvements to the Video Penibility Assessment Framework.
+        
+        ## 🚀 Features
+        - Complete deep learning framework for video penibility assessment
+        - Support for multiple feature extraction methods (I3D, Swin3D, FaceNet, etc.)
+        - Advanced temporal modeling (Transformer, TCN, LSTM, GRU)
+        - Comprehensive TensorBoard integration with prediction visualizations
+        - Cross-validation framework with subject-wise splitting
+        - Rich console output and experiment tracking
+        
+        ## 🔧 Technical Details
+        - **Models**: Transformer, TCN, LSTM, GRU architectures
+        - **Features**: I3D (1024-dim), Swin3D-T (768-dim), and more
+        - **Monitoring**: TensorBoard with prediction vs target plots
+        - **Validation**: 5-fold cross-validation with statistical analysis
+        - **Framework**: PyTorch-based with modular architecture
+        
+        ## 📈 Performance
+        Current best results on penibility assessment:
+        - **I3D + GRU**: MSE=6.87±4.71, R²=0.20, CCC=0.59
+        - **I3D + TCN**: MSE=~3.8, R²=~0.5, CCC=~0.7
+        
+        ## 📦 Installation
+        
+        \`\`\`bash
+        # Install from source
+        git clone https://github.com/salimkhazem/video-penibility.git
+        cd video-penibility
+        pip install -r requirements.txt
+        pip install -e .
+        
+        # Quick start
+        python scripts/train.py --config configs/i3d_tcn.yaml
+        \`\`\`
+        
+        ## 🤝 Contributors
+        - @salimkhazem
+        
+        **Full Changelog**: https://github.com/salimkhazem/video-penibility/compare/v0.1.0...${VERSION}
+        EOF
+        
+        # Read the notes
+        NOTES=$(cat release_notes.md)
+        echo "notes<<EOF" >> $GITHUB_OUTPUT
+        echo "$NOTES" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+    - name: 🎯 Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        release_name: 'Release ${{ steps.version.outputs.version }}'
+        body: ${{ steps.notes.outputs.notes }}
+        draft: false
+        prerelease: ${{ contains(steps.version.outputs.version, '-') }}
+
+  # ================================
+  # Build and Test Release
+  # ================================
+  build-release:
+    name: 🏗️ Build Release Package
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+        
+    - name: 📦 Install Build Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine wheel setuptools
+        pip install -r requirements.txt
+        
+    - name: 🔍 Validate Package Setup
+      run: |
+        python setup.py check --strict --metadata
+        
+    - name: 🏗️ Build Package
+      run: |
+        python -m build
+        
+    - name: 📊 Package Information
+      run: |
+        echo "## 📦 Package Contents" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        ls -la dist/ >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        
+        echo "## 🔍 Package Metadata" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        python setup.py --name --version --description >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        
+    - name: 🧪 Test Package Installation
+      run: |
+        # Test installation from wheel
+        pip install dist/*.whl
+        
+        # Test imports
+        python -c "
+        import video_penibility
+        from video_penibility.models.factory import ModelFactory
+        from video_penibility.config.yaml_config import load_config
+        print('✅ Package imports successful')
+        "
+        
+    - name: 📤 Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-packages
+        path: dist/
+        retention-days: 30
+
+  # ================================
+  # Documentation Release
+  # ================================
+  docs-release:
+    name: 📚 Release Documentation
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: 📦 Install Documentation Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+        pip install -r requirements.txt
+        
+    - name: 📖 Generate Documentation
+      run: |
+        # Create docs directory if it doesn't exist
+        mkdir -p docs
+        
+        # Generate API documentation
+        sphinx-apidoc -o docs/source src/video_penibility --force
+        
+        # Create basic Sphinx configuration if it doesn't exist
+        if [ ! -f docs/conf.py ]; then
+          cat > docs/conf.py << EOF
+        import os
+        import sys
+        sys.path.insert(0, os.path.abspath('../src'))
+        
+        project = 'Video Penibility Assessment'
+        copyright = '2024, Salim Khazem'
+        author = 'Salim Khazem'
+        
+        extensions = [
+            'sphinx.ext.autodoc',
+            'sphinx.ext.viewcode',
+            'sphinx.ext.napoleon',
+            'sphinx_autodoc_typehints',
+        ]
+        
+        html_theme = 'sphinx_rtd_theme'
+        EOF
+        fi
+        
+        # Build documentation
+        cd docs && sphinx-build -b html . _build/html
+        
+    - name: 📤 Upload Documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs/_build/html/
+        retention-days: 30
+
+  # ================================
+  # Release Summary
+  # ================================
+  release-summary:
+    name: 📋 Release Summary
+    runs-on: ubuntu-latest
+    needs: [create-release, build-release, docs-release]
+    if: always()
+    
+    steps:
+    - name: 📊 Release Status Summary
+      run: |
+        echo "# 🚀 Release ${{ needs.create-release.outputs.release-version }} Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| GitHub Release | ${{ needs.create-release.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Package Build | ${{ needs.build-release.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Documentation | ${{ needs.docs-release.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [[ "${{ needs.create-release.result }}" == "success" && 
+              "${{ needs.build-release.result }}" == "success" && 
+              "${{ needs.docs-release.result }}" == "success" ]]; then
+          echo "🎉 **Release ${{ needs.create-release.outputs.release-version }} completed successfully!**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔗 Release Links" >> $GITHUB_STEP_SUMMARY
+          echo "- **GitHub Release**: https://github.com/salimkhazem/video-penibility/releases/tag/${{ needs.create-release.outputs.release-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository**: https://github.com/salimkhazem/video-penibility" >> $GITHUB_STEP_SUMMARY
+          echo "- **Documentation**: Available in release artifacts" >> $GITHUB_STEP_SUMMARY
+          exit 0
+        else
+          echo "❌ **Release failed!** Please check the individual job outputs for details." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+  # ================================
+  # Notification (Optional)
+  # ================================
+  notify:
+    name: 📢 Release Notification
+    runs-on: ubuntu-latest
+    needs: [create-release, build-release, docs-release]
+    if: success()
+    
+    steps:
+    - name: 🎉 Success Notification
+      run: |
+        echo "✅ Release ${{ needs.create-release.outputs.release-version }} has been successfully published!"
+        echo "🔗 View release: https://github.com/salimkhazem/video-penibility/releases/tag/${{ needs.create-release.outputs.release-version }}" 

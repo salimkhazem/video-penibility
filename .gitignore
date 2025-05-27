@@ -1,0 +1,263 @@
+# ===================================
+# Video Penibility Assessment .gitignore
+# ===================================
+
+# ===== Python =====
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+ai_vision/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ===== Machine Learning Specific =====
+# Model files
+*.pth
+*.pt
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.onnx
+*.pb
+*.tflite
+
+# Large dataset files
+*.csv
+*.json
+*.npy
+*.npz
+*.mat
+*.hdf5
+data/
+datasets/
+features/
+raw_data/
+
+# Experiment outputs
+results/
+outputs/
+experiments/
+runs/
+logs/
+checkpoints/
+models/
+saved_models/
+
+# TensorBoard logs
+tensorboard/
+tb_logs/
+lightning_logs/
+
+# Wandb
+wandb/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# ===== IDE and Editors =====
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===== System Files =====
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===== Project Specific =====
+# Configuration files with sensitive data
+config_private.yaml
+*.env
+.secrets/
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.flac
+
+# Documentation builds
+docs/_build/
+docs/source/_autosummary/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.log
+*.out
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Archives
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.zip
+*.rar
+*.7z
+
+# ===== Keep These =====
+# Keep empty directories with .gitkeep
+!.gitkeep
+
+# Keep small config examples
+!*example*.yaml
+!*template*.yaml
+
+# Keep requirements and setup files
+!requirements*.txt
+!setup.py
+!setup.cfg
+!pyproject.toml
+
+# Keep documentation
+!README.md
+!CHANGELOG.md
+!LICENSE
+!docs/
+
+# Keep source code and configs
+!src/
+!scripts/
+!configs/
+!tests/
+

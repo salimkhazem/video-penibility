@@ -1,0 +1,361 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  # ================================
+  # Code Quality & Security
+  # ================================
+  code-quality:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruff black mypy bandit safety
+        pip install -r requirements.txt
+        
+    - name: 🧹 Code Formatting (Black)
+      run: |
+        black --check --diff src/ scripts/ tests/ --line-length 88
+        
+    - name: 🔧 Linting (Ruff)
+      run: |
+        ruff check src/ scripts/ tests/ --output-format=github
+        
+    - name: 🏷️ Type Checking (MyPy)
+      run: |
+        mypy src/ --ignore-missing-imports --strict-optional
+        
+    - name: 🔒 Security Check (Bandit)
+      run: |
+        bandit -r src/ -ll -f json -o bandit-report.json
+        
+    - name: 🛡️ Dependency Security (Safety)
+      run: |
+        safety check --json --output safety-report.json
+      continue-on-error: true
+        
+    - name: 📊 Upload Security Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+
+  # ================================
+  # Testing Matrix
+  # ================================
+  test:
+    name: 🧪 Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov pytest-xdist pytest-mock
+        pip install -r requirements.txt
+        
+    - name: 🏗️ Install Package in Development Mode
+      run: |
+        pip install -e .
+        
+    - name: 🧪 Run Unit Tests
+      run: |
+        pytest tests/ \
+          --cov=src/video_penibility \
+          --cov-report=xml \
+          --cov-report=html \
+          --cov-report=term \
+          --junitxml=test-results.xml \
+          -v \
+          --tb=short \
+          -n auto
+          
+    - name: 📊 Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      if: matrix.python-version == '3.9'
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        
+    - name: 📈 Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-${{ matrix.python-version }}
+        path: |
+          test-results.xml
+          htmlcov/
+          coverage.xml
+
+  # ================================
+  # Configuration Validation
+  # ================================
+  config-validation:
+    name: ⚙️ Config Validation
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml jsonschema
+        pip install -r requirements.txt
+        
+    - name: ✅ Validate YAML Configs
+      run: |
+        python -c "
+        import yaml
+        import os
+        from pathlib import Path
+        
+        config_dir = Path('configs')
+        if config_dir.exists():
+            for config_file in config_dir.glob('*.yaml'):
+                print(f'Validating {config_file}...')
+                with open(config_file) as f:
+                    try:
+                        yaml.safe_load(f)
+                        print(f'✅ {config_file} is valid')
+                    except yaml.YAMLError as e:
+                        print(f'❌ {config_file} is invalid: {e}')
+                        exit(1)
+        else:
+            print('No configs directory found')
+        "
+
+  # ================================
+  # Documentation
+  # ================================
+  docs:
+    name: 📚 Documentation
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+        pip install -r requirements.txt
+        
+    - name: 📖 Check README Links
+      run: |
+        python -c "
+        import re
+        from pathlib import Path
+        
+        readme = Path('README.md').read_text()
+        # Simple check for broken internal links
+        internal_links = re.findall(r'\[.*?\]\((.*?)\)', readme)
+        for link in internal_links:
+            if link.startswith('#') or link.startswith('http'):
+                continue
+            if not Path(link).exists():
+                print(f'❌ Broken link: {link}')
+            else:
+                print(f'✅ Valid link: {link}')
+        "
+
+  # ================================
+  # Model Training Validation (Smoke Test)
+  # ================================
+  model-validation:
+    name: 🤖 Model Training Validation
+    runs-on: ubuntu-latest
+    needs: [test, config-validation]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: 🧪 Dry Run Training Pipeline
+      run: |
+        python -c "
+        import sys
+        from pathlib import Path
+        
+        # Add src to path
+        sys.path.insert(0, str(Path('src')))
+        
+        try:
+            # Test imports
+            from video_penibility.config.yaml_config import load_config
+            from video_penibility.models.factory import ModelFactory
+            from video_penibility.training.trainer_factory import TrainerFactory
+            
+            print('✅ All imports successful')
+            
+            # Test config loading
+            config_files = list(Path('configs').glob('*.yaml'))
+            if config_files:
+                config = load_config(config_files[0])
+                print(f'✅ Config loaded: {config_files[0].name}')
+                
+                # Test model creation (without training)
+                model_factory = ModelFactory()
+                model = model_factory.create_model(
+                    model_name=config['model']['name'],
+                    input_dim=1024,  # Dummy input dimension
+                    **config['model']
+                )
+                print(f'✅ Model created: {config[\"model\"][\"name\"]}')
+            else:
+                print('❌ No config files found')
+                sys.exit(1)
+                
+        except ImportError as e:
+            print(f'❌ Import error: {e}')
+            sys.exit(1)
+        except Exception as e:
+            print(f'❌ Error: {e}')
+            sys.exit(1)
+        "
+
+  # ================================
+  # Performance Monitoring
+  # ================================
+  performance:
+    name: ⚡ Performance Check
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install memory-profiler line-profiler
+        pip install -r requirements.txt
+        
+    - name: 🔍 Memory Usage Check
+      run: |
+        python -c "
+        import psutil
+        import sys
+        
+        # Check available memory
+        memory = psutil.virtual_memory()
+        print(f'Available Memory: {memory.available / (1024**3):.2f} GB')
+        print(f'Total Memory: {memory.total / (1024**3):.2f} GB')
+        print(f'Memory Usage: {memory.percent:.1f}%')
+        
+        # Minimum requirements check
+        min_memory_gb = 4  # Minimum 4GB for ML tasks
+        if memory.available / (1024**3) < min_memory_gb:
+            print(f'❌ Insufficient memory. Need at least {min_memory_gb}GB')
+            sys.exit(1)
+        else:
+            print(f'✅ Memory check passed')
+        "
+
+  # ================================
+  # Build Summary
+  # ================================
+  build-summary:
+    name: 📋 Build Summary
+    runs-on: ubuntu-latest
+    needs: [code-quality, test, config-validation, docs, performance]
+    if: always()
+    
+    steps:
+    - name: 📊 Build Status Summary
+      run: |
+        echo "## 🚀 CI/CD Pipeline Summary"
+        echo ""
+        echo "| Job | Status |"
+        echo "|-----|--------|"
+        echo "| Code Quality | ${{ needs.code-quality.result }} |"
+        echo "| Tests | ${{ needs.test.result }} |"
+        echo "| Config Validation | ${{ needs.config-validation.result }} |"
+        echo "| Documentation | ${{ needs.docs.result }} |"
+        echo "| Performance | ${{ needs.performance.result }} |"
+        echo ""
+        
+        # Set overall status
+        if [[ "${{ needs.code-quality.result }}" == "success" && 
+              "${{ needs.test.result }}" == "success" && 
+              "${{ needs.config-validation.result }}" == "success" && 
+              "${{ needs.docs.result }}" == "success" && 
+              "${{ needs.performance.result }}" == "success" ]]; then
+          echo "🎉 All checks passed! Ready for deployment."
+          exit 0
+        else
+          echo "❌ Some checks failed. Please review the errors above."
+          exit 1
+        fi 
