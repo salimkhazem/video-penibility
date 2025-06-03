@@ -94,18 +94,23 @@ jobs:
       run: |
         pip install -e .
         
-    # - name: 🧪 Run Unit Tests
-    #   run: |
-    #     pytest tests/ \
-    #       --cov=src/video_penibility \
-    #       --cov-report=xml \
-    #       --cov-report=html \
-    #       --cov-report=term-missing \
-    #       --junitxml=test-results.xml \
-    #       -v \
-    #       --tb=short \
-    #       -n auto
-          
+    - name: 🔧 Debug Package Installation
+      run: |
+        echo "=== Python Path ==="
+        python -c "import sys; [print(f'  {p}') for p in sys.path]"
+        echo ""
+        echo "=== Installed Packages ==="
+        pip list | grep video-penibility
+        echo ""
+        echo "=== Package Location ==="
+        python -c "import video_penibility; print(f'Package location: {video_penibility.__file__}')" || echo "Package not found"
+        echo ""
+        echo "=== Directory Structure ==="
+        find . -name "video_penibility" -type d
+        echo ""
+        echo "=== Source Directory ==="
+        ls -la src/
+        
     - name: 📊 Upload Coverage to Codecov
       uses: codecov/codecov-action@v3
       if: matrix.python-version == '3.11'
@@ -239,6 +244,23 @@ jobs:
     - name: 🏗️ Install Package in Development Mode
       run: |
         pip install -e .
+        
+    - name: 🔧 Debug Package Installation
+      run: |
+        echo "=== Python Path ==="
+        python -c "import sys; [print(f'  {p}') for p in sys.path]"
+        echo ""
+        echo "=== Installed Packages ==="
+        pip list | grep video-penibility
+        echo ""
+        echo "=== Package Location ==="
+        python -c "import video_penibility; print(f'Package location: {video_penibility.__file__}')" || echo "Package not found"
+        echo ""
+        echo "=== Directory Structure ==="
+        find . -name "video_penibility" -type d
+        echo ""
+        echo "=== Source Directory ==="
+        ls -la src/
         
     - name: 🧪 Dry Run Training Pipeline
       run: |
