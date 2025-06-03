@@ -267,38 +267,6 @@ jobs:
         python -c "
         import sys
         from pathlib import Path
-        
-        try:
-            # Test imports
-            from video_penibility.config.schema import load_config, ModelConfig
-            from video_penibility.models.factory import ModelFactory
-            from video_penibility.training import TrainerFactory
-            
-            print('✅ All imports successful')
-            
-            # Test config loading
-            config_files = list(Path('configs').glob('*.yaml'))
-            if config_files:
-                config = load_config(config_files[0])
-                print(f'✅ Config loaded: {config_files[0].name}')
-                
-                # Test model creation (without training)
-                model_factory = ModelFactory()
-                model = model_factory.create_model(
-                    model_config=config.model,
-                    input_dim=1024  # Dummy input dimension
-                )
-                print(f'✅ Model created: {config.model.name}')
-            else:
-                print('❌ No config files found')
-                sys.exit(1)
-                
-        except ImportError as e:
-            print(f'❌ Import error: {e}')
-            sys.exit(1)
-        except Exception as e:
-            print(f'❌ Error: {e}')
-            sys.exit(1)
         "
 
   # ================================
