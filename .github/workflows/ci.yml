@@ -248,7 +248,7 @@ jobs:
         
         try:
             # Test imports
-            from video_penibility.config.schema import load_config
+            from video_penibility.config.schema import load_config, ModelConfig
             from video_penibility.models.factory import ModelFactory
             from video_penibility.training import TrainerFactory
             
@@ -263,11 +263,10 @@ jobs:
                 # Test model creation (without training)
                 model_factory = ModelFactory()
                 model = model_factory.create_model(
-                    model_name=config['model']['name'],
-                    input_dim=1024,  # Dummy input dimension
-                    **config['model']
+                    model_config=config.model,
+                    input_dim=1024  # Dummy input dimension
                 )
-                print(f'✅ Model created: {config[\"model\"][\"name\"]}')
+                print(f'✅ Model created: {config.model.name}')
             else:
                 print('❌ No config files found')
                 sys.exit(1)
